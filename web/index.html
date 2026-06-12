@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SnapClass · Smart attendance</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">📸</span> SnapClass</a>
+    </header>
+
+    <section class="hero">
+      <h1>Attendance in one snap</h1>
+      <p>Photograph the class, let AI recognize everyone, review, done.</p>
+    </section>
+
+    <div class="role-grid">
+      <a class="role-card role-card--student" href="/student.html">
+        <span class="glyph" aria-hidden="true">🎓</span>
+        <h3>I'm a student</h3>
+        <p class="muted">Sign in with your face, join subjects, track your own attendance.</p>
+        <span class="go">Student sign in →</span>
+      </a>
+      <a class="role-card role-card--teacher" href="/teacher.html">
+        <span class="glyph" aria-hidden="true">🧑‍🏫</span>
+        <h3>I'm a teacher</h3>
+        <p class="muted">Take attendance from class photos or voices, export records.</p>
+        <span class="go">Teacher sign in →</span>
+      </a>
+    </div>
+
+    <p class="muted center mt-3">Made with ❤️ · SnapClass</p>
+  </main>
+
+  <script type="module">
+    import { getJSON } from '/assets/js/api.js';
+    // Already signed in? Skip the door.
+    getJSON('/api/auth/me').then(me => {
+      const qs = window.location.search;
+      if (me.role === 'student') window.location.href = '/student-dashboard.html' + qs;
+      if (me.role === 'teacher') window.location.href = '/teacher-dashboard.html' + qs;
+    }).catch(() => {});
+  </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student sign in · SnapClass</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+  <main class="shell shell--narrow">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">📸</span> SnapClass</a>
+      <span class="spacer"></span>
+      <a class="btn" href="/">← Home</a>
+    </header>
+
+    <h2>Student sign in</h2>
+
+    <div class="tabs" role="tablist" id="login-tabs">
+      <button role="tab" aria-selected="true" data-panel="panel-face">Face ID</button>
+      <button role="tab" aria-selected="false" data-panel="panel-pass">Password</button>
+    </div>
+
+    <!-- Face login -->
+    <section id="panel-face" role="tabpanel" class="mt-2">
+      <div class="card">
+        <div class="cam-stage" id="login-stage">
+          <video playsinline muted aria-label="Camera preview"></video>
+          <div class="cam-frame" aria-hidden="true"></div>
+          <div class="cam-hint">Center your face in the frame</div>
+        </div>
+        <div class="row mt-2">
+          <button class="btn btn--primary btn--lg" id="btn-face-login" style="flex:1">
+            <span class="spin" aria-hidden="true"></span> Sign in with my face
+          </button>
+        </div>
+        <p class="hint mt-1">Camera needs localhost or HTTPS. New here? You'll be offered registration if your face isn't recognized.</p>
+        <p class="error-text" id="face-error" hidden></p>
+      </div>
+
+      <!-- Registration: revealed when the face isn't recognized -->
+      <div class="card mt-2" id="register-card" hidden>
+        <h3>Create your profile</h3>
+        <p class="muted">We didn't recognize you. Register once; next time your face is your login.</p>
+
+        <div class="field">
+          <label for="reg-name">Full name</label>
+          <input class="input" id="reg-name" placeholder="Akash Kumar" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="reg-username">Username</label>
+          <input class="input" id="reg-username" placeholder="akash123" autocomplete="username">
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="reg-pass">Password</label>
+            <input class="input" id="reg-pass" type="password" placeholder="••••••••" autocomplete="new-password">
+          </div>
+          <div class="field">
+            <label for="reg-pass2">Confirm password</label>
+            <input class="input" id="reg-pass2" type="password" placeholder="••••••••" autocomplete="new-password">
+          </div>
+        </div>
+
+        <h4 class="mt-2">Face photos</h4>
+        <p class="hint">Your sign-in photo is included automatically. Add 2 to 4 more from slightly different angles for better recognition.</p>
+        <div class="row">
+          <button class="btn" id="btn-reg-snap">📷 Add from camera</button>
+          <label class="btn" for="reg-upload">📁 Upload photos</label>
+          <input type="file" id="reg-upload" accept="image/jpeg,image/png" multiple class="visually-hidden">
+        </div>
+        <div class="thumbs" id="reg-thumbs"></div>
+
+        <h4 class="mt-2">Voice (optional)</h4>
+        <p class="hint">Say a short phrase like "I am Akash". Lets your teacher run voice attendance.</p>
+        <div class="row">
+          <button class="btn" id="btn-rec">🎤 Record voice</button>
+          <span class="badge badge--ok" id="rec-done" hidden>Voice recorded ✓</span>
+        </div>
+
+        <hr class="divider">
+        <button class="btn btn--primary btn--lg btn--block" id="btn-register">
+          <span class="spin" aria-hidden="true"></span> Create account
+        </button>
+        <p class="error-text mt-1" id="reg-error" hidden></p>
+      </div>
+    </section>
+
+    <!-- Password login -->
+    <section id="panel-pass" role="tabpanel" class="mt-2" hidden>
+      <div class="card">
+        <div class="field">
+          <label for="pl-username">Username</label>
+          <input class="input" id="pl-username" placeholder="akash123" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="pl-pass">Password</label>
+          <input class="input" id="pl-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn--primary btn--lg btn--block" id="btn-pass-login">
+          <span class="spin" aria-hidden="true"></span> Sign in
+        </button>
+        <p class="hint mt-1">Camera unavailable or face not working? This always gets you in.</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/assets/js/student-auth.js"></script>
+</body>
+</html>

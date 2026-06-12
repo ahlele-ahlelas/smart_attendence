@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My subjects · SnapClass</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">📸</span> SnapClass</a>
+      <span class="spacer"></span>
+      <div class="who"><b id="who-name">…</b><small class="muted">Student</small></div>
+      <button class="btn" id="btn-logout">Log out</button>
+    </header>
+
+    <!-- Recognition strength -->
+    <section class="card" id="face-card">
+      <div class="row row--between">
+        <div style="flex:1; min-width:220px">
+          <h4 style="margin-bottom:6px">🧠 Face recognition</h4>
+          <div class="meter">
+            <div class="meter-track"><div class="meter-fill" id="face-meter" style="width:0%"></div></div>
+            <small class="muted" id="face-meter-label">Loading…</small>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn btn--primary" id="btn-add-photos">➕ Add photos</button>
+          <button class="btn" id="btn-test">🧪 Test recognition</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="row row--between mt-3">
+      <h2 style="margin:0">Your subjects 📚</h2>
+      <div class="row">
+        <select class="input" id="report-period" style="width:auto" aria-label="Report period">
+          <option value="week">Last 7 days</option>
+          <option value="month">Last 30 days</option>
+        </select>
+        <a class="btn" id="btn-report" href="/api/student/report?period=week" download>📄 My report</a>
+        <button class="btn btn--pink" id="btn-join">➕ Join a subject</button>
+      </div>
+    </div>
+
+    <div class="subject-grid mt-2" id="subjects">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </main>
+
+  <!-- Join subject -->
+  <dialog class="modal" id="modal-join">
+    <div class="modal-head"><h3>Join a subject</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="join-code">Subject code from your teacher</label>
+        <input class="input" id="join-code" placeholder="e.g. CS101">
+      </div>
+      <button class="btn btn--primary btn--block" id="btn-join-go">
+        <span class="spin" aria-hidden="true"></span> Enroll now
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Add face photos -->
+  <dialog class="modal" id="modal-photos">
+    <div class="modal-head"><h3>Improve your recognition</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <p class="muted">Add clear photos from slightly different angles and lighting. More photos, fewer misses.</p>
+      <div class="cam-stage" id="photos-stage">
+        <video playsinline muted aria-label="Camera preview"></video>
+        <div class="cam-frame" aria-hidden="true"></div>
+      </div>
+      <div class="row mt-2">
+        <button class="btn" id="btn-snap">📷 Capture</button>
+        <label class="btn" for="photos-upload">📁 Upload</label>
+        <input type="file" id="photos-upload" accept="image/jpeg,image/png" multiple class="visually-hidden">
+      </div>
+      <div class="thumbs" id="photo-thumbs"></div>
+      <hr class="divider">
+      <button class="btn btn--primary btn--block" id="btn-save-photos" disabled>
+        <span class="spin" aria-hidden="true"></span> Save & improve recognition
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Test recognition -->
+  <dialog class="modal" id="modal-test">
+    <div class="modal-head"><h3>Test your recognition</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <p class="muted">Take a photo to check the AI knows you. If it misses, add more photos.</p>
+      <div class="cam-stage" id="test-stage">
+        <video playsinline muted aria-label="Camera preview"></video>
+        <div class="cam-frame" aria-hidden="true"></div>
+      </div>
+      <button class="btn btn--primary btn--block mt-2" id="btn-run-test">
+        <span class="spin" aria-hidden="true"></span> Check me
+      </button>
+      <div class="panel mt-2" id="test-result" hidden></div>
+    </div>
+  </dialog>
+
+  <script type="module" src="/assets/js/student-dashboard.js"></script>
+</body>
+</html>

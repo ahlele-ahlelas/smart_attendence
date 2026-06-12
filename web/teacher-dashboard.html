@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher · SnapClass</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">📸</span> SnapClass</a>
+      <span class="spacer"></span>
+      <div class="who"><b id="who-name">…</b><small class="muted">Teacher</small></div>
+      <button class="btn" id="btn-logout">Log out</button>
+    </header>
+
+    <div class="tabs" role="tablist" id="main-tabs">
+      <button role="tab" aria-selected="true" data-panel="tab-attendance">📸 Take attendance</button>
+      <button role="tab" aria-selected="false" data-panel="tab-subjects">📚 Subjects</button>
+      <button role="tab" aria-selected="false" data-panel="tab-records">🗓️ Records</button>
+      <button role="tab" aria-selected="false" data-panel="tab-analytics">📈 Analytics</button>
+    </div>
+
+    <!-- ============ TAKE ATTENDANCE ============ -->
+    <section id="tab-attendance" role="tabpanel" class="mt-2">
+      <div class="card">
+        <div class="row">
+          <div class="field" style="flex:1; min-width:220px; margin:0">
+            <label for="att-subject">Subject</label>
+            <select class="input" id="att-subject"></select>
+          </div>
+        </div>
+
+        <h4 class="mt-2">Class photos</h4>
+        <div class="row">
+          <button class="btn" id="btn-att-camera">📷 Use camera</button>
+          <label class="btn" for="att-upload">📁 Upload photos</label>
+          <input type="file" id="att-upload" accept="image/jpeg,image/png" multiple class="visually-hidden">
+          <button class="btn btn--danger" id="btn-att-clear" disabled>🗑 Clear</button>
+        </div>
+        <div class="thumbs" id="att-thumbs"></div>
+
+        <hr class="divider">
+        <div class="row">
+          <button class="btn btn--primary btn--lg" id="btn-analyze" disabled style="flex:1">
+            <span class="spin" aria-hidden="true"></span> 🤖 Run face analysis
+          </button>
+          <button class="btn btn--pink btn--lg" id="btn-voice">🎤 Voice attendance</button>
+          <button class="btn btn--lg" id="btn-qr-live">
+            <span class="spin spin--dark" aria-hidden="true"></span> 🔳 Live QR check-in
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SUBJECTS ============ -->
+    <section id="tab-subjects" role="tabpanel" class="mt-2" hidden>
+      <div class="row row--between">
+        <h3 style="margin:0">Your subjects</h3>
+        <button class="btn btn--primary" id="btn-new-subject">➕ New subject</button>
+      </div>
+      <div class="subject-grid mt-2" id="subject-list">
+        <div class="skeleton"></div><div class="skeleton"></div>
+      </div>
+    </section>
+
+    <!-- ============ RECORDS ============ -->
+    <section id="tab-records" role="tabpanel" class="mt-2" hidden>
+      <div class="card">
+        <div class="row">
+          <div class="field" style="flex:1; min-width:200px; margin:0">
+            <label for="rec-subject">Subject</label>
+            <select class="input" id="rec-subject"></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label for="rec-date">Filter by date</label>
+            <input class="input" type="date" id="rec-date">
+          </div>
+          <div class="field" style="margin:0">
+            <label>&nbsp;</label>
+            <a class="btn" id="btn-export" href="#" download>⬇️ Export CSV</a>
+          </div>
+          <div class="field" style="margin:0">
+            <label for="rep-period">PDF report</label>
+            <div class="row" style="gap:8px">
+              <select class="input" id="rep-period" style="width:auto">
+                <option value="week">Last 7 days</option>
+                <option value="month">Last 30 days</option>
+              </select>
+              <a class="btn btn--primary" id="btn-pdf" href="#" download>📄 Download</a>
+            </div>
+          </div>
+        </div>
+        <div class="mt-2" id="rec-sessions"></div>
+      </div>
+    </section>
+
+    <!-- ============ ANALYTICS ============ -->
+    <section id="tab-analytics" role="tabpanel" class="mt-2" hidden>
+      <div class="card">
+        <div class="field" style="max-width:340px">
+          <label for="ana-subject">Subject</label>
+          <select class="input" id="ana-subject"></select>
+        </div>
+        <div id="ana-body"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- camera modal -->
+  <dialog class="modal" id="modal-camera">
+    <div class="modal-head"><h3>Capture class photos</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <div class="cam-stage" id="att-stage">
+        <video playsinline muted aria-label="Camera preview"></video>
+      </div>
+      <div class="row mt-2">
+        <button class="btn btn--primary" id="btn-att-snap" style="flex:1">📷 Capture photo</button>
+        <button class="btn" id="btn-att-done">Done</button>
+      </div>
+      <p class="hint mt-1" id="cam-count">0 photos captured</p>
+    </div>
+  </dialog>
+
+  <!-- voice modal -->
+  <dialog class="modal" id="modal-voice">
+    <div class="modal-head"><h3>Voice attendance</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <p class="muted">Record students saying "I am present" one after another, then analyze.</p>
+      <div class="row">
+        <button class="btn btn--pink" id="btn-voice-rec" style="flex:1">🎤 Start recording</button>
+      </div>
+      <audio id="voice-playback" controls class="mt-2" style="width:100%" hidden></audio>
+      <button class="btn btn--primary btn--block mt-2" id="btn-voice-analyze" disabled>
+        <span class="spin" aria-hidden="true"></span> Analyze voices
+      </button>
+    </div>
+  </dialog>
+
+  <!-- live QR attendance modal -->
+  <dialog class="modal" id="modal-qr" style="width:min(620px, calc(100vw - 32px))">
+    <div class="modal-head"><h3>Live QR check-in</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <div class="grid-2">
+        <div class="center">
+          <img id="qr-live-img" alt="Rotating attendance QR code" width="240" height="240"
+               style="border-radius:12px; border:1px solid var(--line); max-width:100%">
+          <p class="hint">Code refreshes every 30s — screenshots go stale.</p>
+        </div>
+        <div>
+          <h4 style="margin-bottom:4px">Checked in <span class="badge badge--info" id="qr-count">0</span></h4>
+          <p class="hint" style="margin-top:0">Students scan with their phone camera and sign in.</p>
+          <ul id="qr-feed" style="list-style:none; padding:0; margin:8px 0; max-height:240px; overflow-y:auto"></ul>
+        </div>
+      </div>
+      <hr class="divider">
+      <button class="btn btn--primary btn--block" id="btn-qr-finish">
+        <span class="spin" aria-hidden="true"></span> Finish & review
+      </button>
+    </div>
+  </dialog>
+
+  <!-- review & confirm modal -->
+  <dialog class="modal" id="modal-review" style="width:min(760px, calc(100vw - 32px))">
+    <div class="modal-head"><h3>Review before saving</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <div id="review-photos" class="stack"></div>
+      <p class="muted" id="review-summary"></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Detected in</th><th>Present</th></tr></thead>
+          <tbody id="review-rows"></tbody>
+        </table>
+      </div>
+      <div class="row mt-2">
+        <button class="btn" id="btn-review-discard" style="flex:1">Discard</button>
+        <button class="btn btn--primary" id="btn-review-save" style="flex:1">
+          <span class="spin" aria-hidden="true"></span> Confirm & save
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- new subject modal -->
+  <dialog class="modal" id="modal-subject">
+    <div class="modal-head"><h3>New subject</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="sub-name">Subject name</label>
+        <input class="input" id="sub-name" placeholder="Computer Science 101">
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="sub-code">Code</label>
+          <input class="input" id="sub-code" placeholder="CS101">
+        </div>
+        <div class="field">
+          <label for="sub-section">Section</label>
+          <input class="input" id="sub-section" placeholder="A">
+        </div>
+      </div>
+      <button class="btn btn--primary btn--block" id="btn-create-subject">
+        <span class="spin" aria-hidden="true"></span> Create subject
+      </button>
+    </div>
+  </dialog>
+
+  <!-- share modal -->
+  <dialog class="modal" id="modal-share">
+    <div class="modal-head"><h3>Share subject</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body center" id="share-body"></div>
+  </dialog>
+
+  <!-- roster modal -->
+  <dialog class="modal" id="modal-roster" style="width:min(680px, calc(100vw - 32px))">
+    <div class="modal-head"><h3 id="roster-title">Roster</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body" id="roster-body"></div>
+  </dialog>
+
+  <!-- session detail modal -->
+  <dialog class="modal" id="modal-session">
+    <div class="modal-head"><h3 id="session-title">Session</h3><button class="modal-close" aria-label="Close">✕</button></div>
+    <div class="modal-body" id="session-body"></div>
+  </dialog>
+
+  <script type="module" src="/assets/js/teacher-dashboard.js"></script>
+</body>
+</html>

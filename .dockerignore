@@ -1,0 +1,12 @@
+.venv
+.git
+.vscode
+.impeccable
+__pycache__
+*.pyc
+.streamlit
+.session_secret
+.env
+*.log
+test_*.png
+test_*.pdf

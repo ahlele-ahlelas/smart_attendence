@@ -1,0 +1,14 @@
+numpy
+scikit-learn
+deepface
+tf-keras
+opencv-python-headless
+supabase
+bcrypt
+segno
+pillow
+fastapi
+uvicorn[standard]
+python-multipart
+itsdangerous
+matplotlib

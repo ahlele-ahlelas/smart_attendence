@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher sign in · SnapClass</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+  <main class="shell shell--narrow">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">📸</span> SnapClass</a>
+      <span class="spacer"></span>
+      <a class="btn" href="/">← Home</a>
+    </header>
+
+    <h2>Teacher sign in</h2>
+
+    <div class="tabs" role="tablist" id="auth-tabs">
+      <button role="tab" aria-selected="true" data-panel="panel-login">Sign in</button>
+      <button role="tab" aria-selected="false" data-panel="panel-register">Create account</button>
+    </div>
+
+    <section id="panel-login" role="tabpanel" class="mt-2">
+      <div class="card">
+        <div class="field">
+          <label for="li-username">Username</label>
+          <input class="input" id="li-username" placeholder="ahlele" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="li-pass">Password</label>
+          <input class="input" id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn--primary btn--lg btn--block" id="btn-login">
+          <span class="spin" aria-hidden="true"></span> Sign in
+        </button>
+      </div>
+    </section>
+
+    <section id="panel-register" role="tabpanel" class="mt-2" hidden>
+      <div class="card">
+        <div class="field">
+          <label for="re-name">Full name</label>
+          <input class="input" id="re-name" placeholder="Ahlele Tsegay" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="re-username">Username</label>
+          <input class="input" id="re-username" placeholder="ahlele" autocomplete="username">
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="re-pass">Password</label>
+            <input class="input" id="re-pass" type="password" placeholder="••••••••" autocomplete="new-password">
+          </div>
+          <div class="field">
+            <label for="re-pass2">Confirm password</label>
+            <input class="input" id="re-pass2" type="password" placeholder="••••••••" autocomplete="new-password">
+          </div>
+        </div>
+        <button class="btn btn--primary btn--lg btn--block" id="btn-register">
+          <span class="spin" aria-hidden="true"></span> Create account
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { postJSON } from '/assets/js/api.js';
+    import { toast, wireTabs, withBusy } from '/assets/js/ui.js';
+
+    const $ = id => document.getElementById(id);
+    const DASH = '/teacher-dashboard.html';
+    wireTabs($('auth-tabs'));
+
+    $('btn-login').addEventListener('click', () =>
+      withBusy($('btn-login'), async () => {
+        const res = await postJSON('/api/auth/teacher/login', {
+          username: $('li-username').value, password: $('li-pass').value,
+        });
+        toast(`Welcome back, ${res.teacher.name}!`, 'ok');
+        window.location.href = DASH;
+      }).catch(() => {}));
+
+    $('li-pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-login').click(); });
+
+    $('btn-register').addEventListener('click', () =>
+      withBusy($('btn-register'), async () => {
+        if ($('re-pass').value !== $('re-pass2').value) {
+          toast('Passwords do not match.', 'danger');
+          return;
+        }
+        const res = await postJSON('/api/auth/teacher/register', {
+          name: $('re-name').value, username: $('re-username').value, password: $('re-pass').value,
+        });
+        toast(`Welcome, ${res.teacher.name}! Account created.`, 'ok');
+        window.location.href = DASH;
+      }).catch(() => {}));
+  </script>
+</body>
+</html>
